@@ -1,0 +1,50 @@
+#%RAML 1.0
+title: calculator-exp-api
+version: v1.0
+protocols:
+  - HTTP
+description: This API using to operate maths opeartions
+
+traits:
+  QP: !include /traits/qp-failure-response-trait.raml
+
+/addition:
+  get:
+    is:
+      - QP
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include example/addition-success-response.json
+
+/substraction:
+  put:
+    is:
+      - QP
+    responses: 
+      200:
+        body:
+          application/json:
+            example: !include example/substraction-success-response.json
+              
+/multiplication:
+  post:
+    is:
+      - QP
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include example/multiplication-success-response.json
+              
+/division:
+  patch:
+    is:
+      - QP
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include example/division-success-response.json
+              
