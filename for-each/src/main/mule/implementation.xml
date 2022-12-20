@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="9205a849-f324-4856-bdcf-2e40f7efeeed" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Chandu216" database="mule_db" />
+	</db:config>
+	<flow name="insert" doc:id="edcee466-a3b9-4023-8cce-cc3f415abb3f" >
+		<ee:transform doc:name="Transform Message" doc:id="540a2fca-515b-427a-a9ae-657e3c8230b6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+
+1 to 10 map
+{
+ 	id: 300 + $$,
+ 	first_name: "Chandu",
+ 	last_name: "Reddy",
+ 	phone_number:"2192463300",
+ 	country: "USA"
+ 	
+ }]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="5fd181cd-cb9e-4471-a280-d34dc42c941f" >
+			<logger level="INFO" doc:name="Logger" doc:id="6755ea78-31c5-4172-a8a4-86dfe14e0ae7" message="#[payload]" />
+			<db:insert doc:name="Insert" doc:id="bcc3df77-5126-442e-897d-9973bbda96f6" config-ref="Database_Config">
+				<db:sql ><![CDATA[INSERT INTO student_info (id, first_name, last_name, phone_number, country)
+VALUES (:id, :first_name, :last_name, :phone_number, :country);]]></db:sql>
+				<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
+			</db:insert>
+		</foreach>
+		<logger level="INFO" doc:name="Logger" doc:id="f59f124d-69c9-47de-93a7-a9b58c1ba36f" />
+	</flow>
+	<flow name="select" doc:id="990477b7-17e7-424a-af14-165dc32f7799" >
+		<db:select doc:name="Select" doc:id="fbae533b-e6af-4cf3-998f-dfded8e210e7" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM student_info:]]></db:sql>
+		</db:select>
+		<logger level="INFO" doc:name="Logger" doc:id="573e41dc-9100-42b2-8aff-a8e0b53fa30a" message="#[output application/json --- payload]"/>
+	</flow>
+	<flow name="where1" doc:id="dc507b51-944f-45ee-8575-aff152b12834" >
+		<db:select doc:name="Select" doc:id="98fc91b0-7e44-45e0-b719-d3c725c311be" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from mule_db.student_info where id = 221;]]></db:sql>
+		</db:select>
+		<logger level="INFO" doc:name="Logger" doc:id="75763ac7-308d-44db-946a-25b4b59ccfcd" message="#[output application/json --- payload]"/>
+	</flow>
+	<flow name="where2" doc:id="50205edc-60fb-42de-8bfd-cda6d43ec0c0" >
+		<db:select doc:name="Select" doc:id="95eb4576-3672-4e66-853f-27e93ee92848" config-ref="Database_Config">
+			<db:sql ><![CDATA[select first_name,last_name,phone_number from mule_db.student_info where id IN (202,204,304,299);
+]]></db:sql>
+		</db:select>
+		<logger level="INFO" doc:name="Logger" doc:id="be2ea59b-fdf0-481a-b85a-36ba01362321" message="#[output application/json ---payload]"/>
+	</flow>
+	<flow name="update" doc:id="7952fc89-02fd-41eb-b9cc-347f78187074" >
+		<db:update doc:name="Update" doc:id="7969f681-d6fb-48b0-bc4a-a7d47fbfd5ce" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE student_info SET first_name = 'Virender', last_name= 'Sehwag' WHERE id IN (266, 306, 222);]]></db:sql>
+		</db:update>
+		<logger level="INFO" doc:name="Logger" doc:id="46a5aab6-9f00-481d-be86-00dc7bd82731" message="#[output application/json ---payload]"/>
+	</flow>
+	<flow name="delete" doc:id="420e7ffe-0575-4394-8cb7-2a1359ee36e8" >
+		<db:delete doc:name="Delete" doc:id="c43426da-727c-4607-9f35-cedc764b8cd6" config-ref="Database_Config">
+			<db:sql ><![CDATA[DELETE FROM student_info WHERE id= 221;]]></db:sql>
+		</db:delete>
+		<logger level="INFO" doc:name="Logger" doc:id="ce3e0eb9-a7c2-4c4c-84f1-b433a9bd4bb8" message="#[output application/json ---payload]"/>
+	</flow>
+</mule>

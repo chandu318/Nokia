@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c7b6fa9e-a9b5-4b62-b4f7-b8740b9723ca" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="for-eachFlow" doc:id="c1453066-4096-4682-be82-ff54d4f3afc6" >
+		<http:listener doc:name="Listener" doc:id="fa33c942-d862-41d2-87c6-ee9110f27f5d" config-ref="HTTP_Listener_config" path="/for-each"/>
+		<ee:transform doc:name="Transform Message" doc:id="c3292f52-2d73-497e-a48a-45ec264f8537" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+ 1 to 100 map
+ {
+ 	id: 200 + $$,
+ 	first_name: "Chandu",
+ 	last_name: "Reddy",
+ 	phone_number:"2192463300",
+ 	country: "USA"
+ 	
+ }]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="5dfec65a-4827-45dd-a43a-01eec7aa8ec4" >
+			<logger level="INFO" doc:name="Logger" doc:id="24224470-65cb-4f8d-8b18-9fa905729ed2" />
+		</foreach>
+	</flow>
+	<flow name="inser-Flow" doc:id="7c48e6f5-cd51-4388-819b-0e08850aff31" >
+		<http:listener doc:name="Listener" doc:id="0f1e1957-b987-4fee-9125-b1b5d12b2a7e" config-ref="HTTP_Listener_config" path="insert"/>
+		<flow-ref doc:name="Flow Reference" doc:id="cd8e6a5d-46cb-4e5e-8a08-b00dd8b8e741" name="insert"/>
+	</flow>
+	<flow name="select-Flow" doc:id="61162af1-6af0-4d5e-ac13-9026e6e1f4e2" >
+		<http:listener doc:name="Listener" doc:id="446de5ca-9ab3-45f9-b63b-dca273119473" config-ref="HTTP_Listener_config" path="select">
+			<http:response >
+				<http:body ><![CDATA[#[output application/json --- payload]]]></http:body>
+			</http:response>
+		</http:listener>
+		<flow-ref doc:name="Flow Reference" doc:id="efb42009-cec8-4597-98b0-376235241d5c" name="select"/>
+	</flow>
+	<flow name="where-Flow" doc:id="ef3fb2de-943c-418a-a02d-82fa66094386" >
+		<http:listener doc:name="Listener" doc:id="6c4723b0-f31e-4c14-82a7-9054e59d5598" config-ref="HTTP_Listener_config" path="where1">
+			<http:response >
+				<http:body ><![CDATA[#[output application/json --- payload]]]></http:body>
+			</http:response>
+		</http:listener>
+		<flow-ref doc:name="Flow Reference" doc:id="9129eb08-6365-4946-9ae2-96dea0611cca" name="where1"/>
+	</flow>
+	<flow name="where-Flow2" doc:id="f6747934-1cfa-456b-96b8-5ea32a06e8d8" >
+		<http:listener doc:name="Listener" doc:id="fb1a1939-ed0d-44cc-9b5c-7b430804ba22" config-ref="HTTP_Listener_config" path="where2">
+			<http:response >
+				<http:body ><![CDATA[#[output application/json --- payload]]]></http:body>
+			</http:response>
+		</http:listener>
+		<flow-ref doc:name="Flow Reference" doc:id="8b01f7f9-d35d-40b3-b1bc-87118e2bc07a" name="where2"/>
+	</flow>
+	<flow name="update-Flow" doc:id="871e8628-e305-42a3-92af-bf26235fba64" >
+		<http:listener doc:name="Listener" doc:id="1edcbf19-56cf-40ef-8997-b9cc46442905" config-ref="HTTP_Listener_config" path="update">
+			<http:response >
+				<http:body ><![CDATA[#[output application/json ---payload]]]></http:body>
+			</http:response>
+		</http:listener>
+		<flow-ref doc:name="Flow Reference" doc:id="f5955cd4-7401-4b8b-9fe5-91acfc7e1715" name="update"/>
+	</flow>
+	<flow name="delete-Flow" doc:id="19e00606-e53a-4412-a2b3-7aec526632c3" >
+		<http:listener doc:name="Listener" doc:id="7dd90269-deb0-401e-9d0e-14e3fb54396d" config-ref="HTTP_Listener_config" path="delete">
+			<http:response >
+				<http:body ><![CDATA[#[output application/json ---payload]]]></http:body>
+			</http:response>
+		</http:listener>
+		<flow-ref doc:name="Flow Reference" doc:id="c537c186-92db-4b83-a28f-b67f5742e331" name="delete"/>
+	</flow>
+</mule>
